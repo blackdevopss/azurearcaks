@@ -10,40 +10,37 @@ resource "azuredevops_variable_group" "var_group" {
   }
 
   variable {
+    name = "access-key"
+  }
+  variable {
+    name = "azdo-pat"
+  }
+  variable {
+    name = "bridgecrew-apikey"
+  }
+  variable {
     name = "client-id"
   }
   variable {
     name = "client-secret"
   }
   variable {
-    name = "tenant-id"
+    name = "github-pat"
   }
   variable {
-    name = "subscription-id"
-  }
-  variable {
-    name = "azdo-pat"
-  }
-  variable {
-    name = "terraform-api-token"
-  }
-  variable {
-    name = "bridgecrew-apikey"
+    name = "secret-key"
   }
   variable {
     name = "ssh-public-key"
   }
   variable {
-    name = "ssh-private-key"
+    name = "subscription-id"
   }
   variable {
-    name = "github-pat"
+    name = "tenant-id"
   }
   variable {
-    name = "aws-access-key"
-  }
-  variable {
-    name = "aws-secret-access-key"
+    name = "terraform-api-token"
   }
 
   depends_on = [

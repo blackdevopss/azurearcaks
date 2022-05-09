@@ -1,4 +1,4 @@
-resource "azuredevops_build_definition" "eks" {
+resource "azuredevops_build_definition" "main" {
   project_id      = data.azuredevops_project.project.id
   name            = "MultiCloud - K8S Build"
   agent_pool_name = data.azuredevops_agent_pool.blackdevops.name
