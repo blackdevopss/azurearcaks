@@ -16,8 +16,12 @@ variables:
 - group: TerraformVarsGroup
 - name: repo_id
   value: blackdevops/azurearcaks
-- name: artifact_name
+- name: eks_artifact_name
   value: TF_Plan_EKS
+- name: aks_artifact_name
+  value: TF_Plan_AKS
+- name: gke_artifact_name
+  value: TF_Plan_GKE
 - name: region
   value: us-west-1
 
@@ -80,12 +84,12 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
           commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
           allowTelemetryCollection: false
-#          publishPlanResults: '$(artifact_name).tfplan'
+          publishPlanResults: '$(eks_artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
         displayName: Publishing Terraform Plan
         inputs:
           targetPath: '$(System.DefaultWorkingDirectory)/eks'
-          artifact: '$(Build.SourceBranchName)_$(artifact_name)'
+          artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
 
   - stage: ReleaseEKS
     displayName: Stage - TF Apply EKS
@@ -116,8 +120,8 @@ stages:
                 allowTelemetryCollection: false
 
   - stage: ValidateAKS
-    dependsOn: ['Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS']
-    condition: succeeded('Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS')
+    dependsOn: ['Initialize']
+    condition: succeeded('Initialize')
     displayName: Stage - TF Validate AKS
     jobs:
     - job: Validate_TF_Config
@@ -156,12 +160,12 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
           commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
           allowTelemetryCollection: false
-#          publishPlanResults: '$(artifact_name).tfplan'
+          publishPlanResults: '$(aks_artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
         displayName: Publishing Terraform Plan
         inputs:
           targetPath: '$(System.DefaultWorkingDirectory)/aks'
-          artifact: '$(Build.SourceBranchName)_$(artifact_name)'
+          artifact: '$(Build.SourceBranchName)_$(aks_artifact_name)'
 
   - stage: ReleaseAKS
     displayName: Stage - TF Apply AKS
@@ -192,7 +196,7 @@ stages:
                 allowTelemetryCollection: false
 
   - stage: ValidateGKE
-    dependsOn: ['Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS', 'ValidateAKS', 'PlanAKS', 'ReleaseAKS']
+    dependsOn: ['Initialize']
     condition: succeeded('Initialize')
     displayName: Stage - TF Validate GKE
     jobs:
@@ -232,12 +236,12 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
           commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
           allowTelemetryCollection: false
-#          publishPlanResults: '$(artifact_name).tfplan'
+          publishPlanResults: '$(gke_artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
         displayName: Publishing Terraform Plan
         inputs:
           targetPath: '$(System.DefaultWorkingDirectory)/gke'
-          artifact: '$(Build.SourceBranchName)_$(artifact_name)'
+          artifact: '$(Build.SourceBranchName)_$(gke_artifact_name)'
 
   - stage: ReleaseGKE
     displayName: Stage - TF Apply GKE
