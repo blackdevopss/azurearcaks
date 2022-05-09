@@ -7,10 +7,10 @@ trigger:
   paths:
     include:
     - eks
-    exclude:
-    - ci_cd
     - aks
     - gke
+    exclude:
+    - ci_cd
 
 variables:
 - group: TerraformVarsGroup
