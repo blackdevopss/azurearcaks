@@ -120,6 +120,7 @@ stages:
                 allowTelemetryCollection: false
 
   - stage: ValidateAKS
+    pool: blackdevops
     dependsOn: ['Initialize']
     condition: succeeded('Initialize')
     displayName: Stage - TF Validate AKS
@@ -141,6 +142,7 @@ stages:
           allowTelemetryCollection: false
 
   - stage: PlanAKS
+    pool: blackdevops
     displayName: Stage - TF Plan AKS
     dependsOn: [ValidateAKS]
     condition: succeeded('ValidateAKS')
@@ -168,6 +170,7 @@ stages:
           artifact: '$(Build.SourceBranchName)_$(aks_artifact_name)'
 
   - stage: ReleaseAKS
+    pool: blackdevops
     displayName: Stage - TF Apply AKS
     dependsOn: [PlanAKS]
     condition: succeeded('PlanAKS')
