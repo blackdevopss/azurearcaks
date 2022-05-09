@@ -116,7 +116,7 @@ stages:
                 allowTelemetryCollection: false
 
   - stage: ValidateAKS
-    dependsOn: [Initialize]
+    dependsOn: ['Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS']
     condition: succeeded('Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS')
     displayName: Stage - TF Validate AKS
     jobs:
@@ -192,7 +192,7 @@ stages:
                 allowTelemetryCollection: false
 
   - stage: ValidateGKE
-    dependsOn: [Initialize]
+    dependsOn: ['Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS', 'ValidateAKS', 'PlanAKS', 'ReleaseAKS']
     condition: succeeded('Initialize')
     displayName: Stage - TF Validate GKE
     jobs:
@@ -230,7 +230,7 @@ stages:
         inputs:
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-          commandOptions: '-input=false -var "region=$(gcp-region)"'
+          commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
           allowTelemetryCollection: false
 #          publishPlanResults: '$(artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
