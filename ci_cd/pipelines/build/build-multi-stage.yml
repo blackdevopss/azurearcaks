@@ -271,10 +271,11 @@ stages:
               inputs:
                 command: 'apply'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-                commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
+#                commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
                 allowTelemetryCollection: false
 
   - stage: ArcPrerequisites
+    pool: blackdevops
     displayName: Stage - Azure Arc Tools
     dependsOn: ['ReleaseAKS', "ReleaseEKS", 'ReleaseGKE']
     jobs:
