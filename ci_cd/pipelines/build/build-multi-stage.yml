@@ -234,7 +234,7 @@ stages:
         inputs:
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-          commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
+          commandOptions: '-var "gcp_credentials=$(gcp-credentials)"'
           allowTelemetryCollection: false
           publishPlanResults: '$(gke_artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
