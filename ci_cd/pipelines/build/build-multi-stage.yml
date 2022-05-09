@@ -1,0 +1,308 @@
+name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r) 
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+    - eks
+    exclude:
+    - ci_cd
+    - aks
+    - gke
+
+variables:
+- group: TerraformVarsGroup
+- name: repo_id
+  value: blackdevops/azurearcaks
+- name: artifact_name
+  value: TF_Plan_EKS
+- name: region
+  value: us-west-1
+
+pool:
+  name: aws
+
+stages:    
+
+  - stage: Initialize
+    displayName: Stage - TF Init
+    jobs:
+    - job: Initialize_Terraform
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+
+  - stage: ValidateEKS
+    dependsOn: [Initialize]
+    condition: succeeded('Initialize')
+    displayName: Stage - TF Validate EKS
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Validate
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+          allowTelemetryCollection: false
+
+  - stage: PlanEKS
+    displayName: Stage - TF Plan EKS
+    dependsOn: [ValidateEKS]
+    condition: succeeded('ValidateEKS')
+    jobs:
+    - job: Generate_TF_Plan
+      steps:
+      - task: TerraformCLI@0
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+          commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
+          allowTelemetryCollection: false
+          publishPlanResults: '$(artifact_name).tfplan'
+      - task: PublishPipelineArtifact@1
+        displayName: Publishing Terraform Plan
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/eks'
+          artifact: '$(Build.SourceBranchName)_$(artifact_name)'
+
+  - stage: ReleaseEKS
+    displayName: Stage - TF Apply EKS
+    dependsOn: [PlanEKS]
+    condition: succeeded('PlanEKS')
+    jobs:
+    - deployment: Apply
+      displayName: 'Terraform Apply'
+      environment: aws
+      pool: aws
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: TerraformCLI@0
+              displayName: Init
+              inputs:
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+                backendType: 'selfConfigured'
+                allowTelemetryCollection: false 
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+                commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
+                allowTelemetryCollection: false
+
+  - stage: ValidateAKS
+    dependsOn: [Initialize]
+    condition: succeeded('Initialize')
+    displayName: Stage - TF Validate AKS
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Validate
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+          allowTelemetryCollection: false
+
+  - stage: PlanAKS
+    displayName: Stage - TF Plan AKS
+    dependsOn: [ValidateAKS]
+    condition: succeeded('ValidateAKS')
+    jobs:
+    - job: Generate_TF_Plan
+      steps:
+      - task: TerraformCLI@0
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+          commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
+          allowTelemetryCollection: false
+          publishPlanResults: '$(artifact_name).tfplan'
+      - task: PublishPipelineArtifact@1
+        displayName: Publishing Terraform Plan
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/aks'
+          artifact: '$(Build.SourceBranchName)_$(artifact_name)'
+
+  - stage: ReleaseAKS
+    displayName: Stage - TF Apply AKS
+    dependsOn: [PlanAKS]
+    condition: succeeded('PlanAKS')
+    jobs:
+    - deployment: Apply
+      displayName: 'Terraform Apply'
+      environment: azure
+      pool: blackdevops
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: TerraformCLI@0
+              displayName: Init
+              inputs:
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+                backendType: 'selfConfigured'
+                allowTelemetryCollection: false 
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+                commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
+                allowTelemetryCollection: false
+
+  - stage: ValidateGKE
+    dependsOn: [Initialize]
+    condition: succeeded('Initialize')
+    displayName: Stage - TF Validate GKE
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Validate
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+          allowTelemetryCollection: false
+
+  - stage: PlanGKE
+    displayName: Stage - TF Plan GKE
+    dependsOn: [ValidateGKE]
+    condition: succeeded('ValidateGKE')
+    jobs:
+    - job: Generate_TF_Plan
+      steps:
+      - task: TerraformCLI@0
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+          commandOptions: '-input=false -var "region=$(gcp-region)"'
+          allowTelemetryCollection: false
+          publishPlanResults: '$(artifact_name).tfplan'
+      - task: PublishPipelineArtifact@1
+        displayName: Publishing Terraform Plan
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/gke'
+          artifact: '$(Build.SourceBranchName)_$(artifact_name)'
+
+  - stage: ReleaseGKE
+    displayName: Stage - TF Apply GKE
+    dependsOn: [PlanGKE]
+    condition: succeeded('PlanGKE')
+    jobs:
+    - deployment: Apply
+      displayName: 'Terraform Apply'
+      environment: gcp
+      pool: blackdevops
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: TerraformCLI@0
+              displayName: Init
+              inputs:
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+                backendType: 'selfConfigured'
+                allowTelemetryCollection: false 
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+                commandOptions: '-input=false -var "region=$(gcp-region)"'
+                allowTelemetryCollection: false
+
+  - stage: ArcPrerequisites
+    displayName: Stage - Azure Arc Tools
+    dependsOn: ['ReleaseAKS', "ReleaseEKS", 'ReleaseGKE']
+    jobs:
+    - job: Install_Kubernetes_Providers
+      pool: server
+      steps:
+      - task: InvokeRESTAPI@1
+        displayName: EnableOIDCIssuerPreview
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
+          waitForCompletion: 'false'
+      - task: InvokeRESTAPI@1
+        displayName: Microsoft.Kubernetes
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Kubernetes/register?api-version=2021-04-01'
+          waitForCompletion: 'false'
+      - task: InvokeRESTAPI@1
+        displayName: Microsoft.KubernetesConfiguration
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.KubernetesConfiguration/register?api-version=2021-04-01'
+          waitForCompletion: 'false' 
+      - task: InvokeRESTAPI@1
+        displayName: Microsoft.ExtendedLocation
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.ExtendedLocation/register?api-version=2021-04-01'
+          waitForCompletion: 'false'
