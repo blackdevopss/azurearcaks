@@ -80,7 +80,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
           commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
           allowTelemetryCollection: false
-          publishPlanResults: '$(artifact_name).tfplan'
+#          publishPlanResults: '$(artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
         displayName: Publishing Terraform Plan
         inputs:
@@ -117,7 +117,7 @@ stages:
 
   - stage: ValidateAKS
     dependsOn: [Initialize]
-    condition: succeeded('Initialize')
+    condition: succeeded('Initialize', 'ValidateEKS', 'PlanEKS', 'ReleaseEKS')
     displayName: Stage - TF Validate AKS
     jobs:
     - job: Validate_TF_Config
@@ -156,7 +156,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
           commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
           allowTelemetryCollection: false
-          publishPlanResults: '$(artifact_name).tfplan'
+#          publishPlanResults: '$(artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
         displayName: Publishing Terraform Plan
         inputs:
@@ -232,7 +232,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
           commandOptions: '-input=false -var "region=$(gcp-region)"'
           allowTelemetryCollection: false
-          publishPlanResults: '$(artifact_name).tfplan'
+#          publishPlanResults: '$(artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
         displayName: Publishing Terraform Plan
         inputs:
@@ -264,7 +264,7 @@ stages:
               inputs:
                 command: 'apply'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-                commandOptions: '-input=false -var "region=$(gcp-region)"'
+                commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
                 allowTelemetryCollection: false
 
   - stage: ArcPrerequisites

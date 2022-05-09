@@ -42,6 +42,9 @@ resource "azuredevops_variable_group" "var_group" {
   variable {
     name = "terraform-api-token"
   }
+  variable {
+    name = "gcp-credentials"
+  }
 
   depends_on = [
     azuredevops_serviceendpoint_azurerm.service_ep
