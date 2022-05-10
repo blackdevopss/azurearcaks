@@ -1,5 +1,6 @@
-gcp_region     = "us-central1"
-gcp_project_id = "slsfs-dev"
+gcp_region      = "us-central1"
+gcp_project_id  = "slsfs-dev"
+gcp_svs_account = "./slsfs-dev-b00033ed664b.json"
 
 // VPC
 gke_vpc_name                    = "vpc-azarc-eks"

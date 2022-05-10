@@ -226,6 +226,9 @@ stages:
     jobs:
     - job: Generate_TF_Plan
       steps:
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'slsfs-dev-b00033ed664b.json'
       - task: TerraformCLI@0
         inputs:
           command: 'init'
