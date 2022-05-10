@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
 
 resource "aws_subnet" "private_east_1a" {
   vpc_id     = aws_vpc.eks.id
-  cidr_block = "10.0.128.0/20"
+  cidr_block = "10.0.16.0/20"
 
   tags = {
     Name = "snet-eks-private-us-east-1a"
@@ -29,7 +29,7 @@ resource "aws_subnet" "private_east_1a" {
 
 resource "aws_subnet" "private_east_1b" {
   vpc_id     = aws_vpc.eks.id
-  cidr_block = "10.0.64.0/20"
+  cidr_block = "10.0.32.0/20"
 
   tags = {
     Name = "snet-eks-private-us-east-1b"

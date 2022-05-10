@@ -9,7 +9,7 @@ terraform {
 
 provider "google" {
   project     = var.gcp_project_id
-  credentials = file(var.gcp_svs_account)
+  credentials = var.gcp_svs_account
   region      = var.gcp_region
   # Configuration options
 }
