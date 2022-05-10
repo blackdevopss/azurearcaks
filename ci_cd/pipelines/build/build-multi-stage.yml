@@ -230,7 +230,7 @@ stages:
         name: gcp_credentials
         displayName: DownloadGCPCredentialFile
         inputs:
-          secureFile: 'slsfs-dev-b00033ed664b.json'
+          secureFile: 'slsfs-dev-365463f644a0.json'
       - task: TerraformCLI@0
         inputs:
           command: 'init'
@@ -276,7 +276,7 @@ stages:
               inputs:
                 command: 'apply'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-#                commandOptions: '-input=false -var "gcp_credentials=$(gcp-credentials)"'
+                commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
                 allowTelemetryCollection: false
 
   - stage: ArcPrerequisites
