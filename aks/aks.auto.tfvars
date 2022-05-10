@@ -1,6 +1,6 @@
-resource_group_name                  = "rg-aks-clusters"
+resource_group_name                  = "rg-azarc-aks"
 azure_region                         = "centralus"
-aks_subnet_name                      = "mgmt-azarc-aks"
+aks_subnet_name                      = "snet-azarc-aks"
 aks_vnet_name                        = "vnet-azarc-aks"
 aks_vnet_address_space               = ["10.150.0.0/19"]
 aks_vnet_dns_servers                 = ["168.63.129.16"]
@@ -8,9 +8,9 @@ aks_nodepool_subnet_address_prefixes = ["10.150.0.0/21"]
 
 api_server_authorized_ip_ranges = ["45.21.46.49"]
 
-aks_cluster_name = "mgmt-azarc-aks"
+aks_cluster_name = "aks-azarc-mgmt"
 #dns_prefix_private_cluster         = "mgmtazarcaks"
-aks_cluster_dns_prefix             = "mgmtazarcaks"
+aks_cluster_dns_prefix             = "aksazarcmgmt"
 automatic_channel_upgrade          = "stable"
 kubernetes_version                 = "1.23.5"
 aks_availability_zones             = ["1"]
@@ -32,7 +32,7 @@ vnet_service_endpoints = [
 "Microsoft.Web"]
 
 aks_natgw_public_ip_zone = ["1"]
-aks_nat_gateway_name     = "ngw-arcaks-poc"
+aks_nat_gateway_name     = "ngw-azarc-aks"
 
 tags = {
 
