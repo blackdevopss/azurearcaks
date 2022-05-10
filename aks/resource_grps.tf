@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "rg" {
   tags     = var.tags
 }
 
-resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "arc_rg" {
   name     = "rg-azarc-aks"
   location = var.azure_region
   tags     = var.tags

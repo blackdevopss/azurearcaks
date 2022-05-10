@@ -14,4 +14,3 @@ resource "aws_eks_cluster" "eks" {
   ]
 }
 
-variable "eks_cluster_name" { type = string }

@@ -36,7 +36,6 @@ resource "aws_subnet" "private_east_1b" {
   }
 }
 
-
 // INTERNET GATEWAY
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.eks.id
@@ -47,11 +46,21 @@ resource "aws_internet_gateway" "igw" {
 }
 
 // NAT GATEWAY
-resource "aws_nat_gateway" "private" {
+resource "aws_nat_gateway" "private_1a" {
   connectivity_type = "private"
-  subnet_id         = aws_subnet.private.id
+  subnet_id         = aws_subnet.private_east_1a.id
 
   tags = {
-    "Name" = "ngw-eks-private-us-east-1"
+    "Name" = "ngw-eks-private-us-east-1a"
+  }
+}
+
+// NAT GATEWAY
+resource "aws_nat_gateway" "private_1b" {
+  connectivity_type = "private"
+  subnet_id         = aws_subnet.private_east_1b.id
+
+  tags = {
+    "Name" = "ngw-eks-private-us-east-1b"
   }
 }

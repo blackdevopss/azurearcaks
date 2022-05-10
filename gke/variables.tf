@@ -38,7 +38,7 @@ variable "enable_private_ip_google_access" {
   type = bool
 }
 
-variable "vpc_stack_type" {
+variable "subnet_stack_type" {
   type = string
 }
 
