@@ -1,5 +1,5 @@
 resource_group_name                  = "rg-aks-clusters"
-azure_region                         = "westus2"
+azure_region                         = "centralus"
 aks_subnet_name                      = "mgmt-azarc-aks"
 aks_vnet_name                        = "vnet-azarc-aks"
 aks_vnet_address_space               = ["10.150.0.0/19"]
