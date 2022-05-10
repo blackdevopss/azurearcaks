@@ -46,6 +46,3 @@ variable "gke_subnet_secondary_ip_range" {
   type = string
 }
 
-variable "gcp_svs_account" {
-  type = string
-}
