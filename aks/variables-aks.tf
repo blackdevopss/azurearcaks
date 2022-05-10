@@ -4,9 +4,6 @@ variable "aks_cluster_name" {
 variable "aks_cluster_dns_prefix" {
   type = string
 }
-#variable "dns_prefix_private_cluster" {
-#  type = string
-#}
 
 variable "automatic_channel_upgrade" {
   type = string
@@ -15,10 +12,6 @@ variable "automatic_channel_upgrade" {
 variable "kubernetes_version" {
   type = string
 }
-
-#variable "aks_availability_zones" {
-#  type = list(string)
-#}
 
 variable "aks_cluster_admin_group_object_ids" {
   type = list(string)
@@ -39,8 +32,4 @@ variable "system_node_pool_node_vm_size" {
 variable "ssh_public_key_data" {
   type = string
 
-}
-
-variable "api_server_authorized_ip_ranges" {
-  type = list(string)
 }

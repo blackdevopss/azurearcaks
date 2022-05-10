@@ -16,7 +16,6 @@ resource "azurerm_virtual_network" "vnet" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = var.aks_vnet_address_space
-  dns_servers         = var.aks_vnet_dns_servers
 
   tags = var.tags
 }
@@ -41,35 +40,3 @@ resource "azurerm_route_table" "rtb" {
   tags = var.tags
 }
 
-resource "azurerm_public_ip" "natgw" {
-  name                = "pip-${var.aks_nat_gateway_name}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  zones               = var.aks_natgw_public_ip_zone
-
-  tags = var.tags
-}
-
-
-resource "azurerm_nat_gateway" "natgw" {
-  name                    = var.aks_nat_gateway_name
-  location                = azurerm_resource_group.rg.location
-  resource_group_name     = azurerm_resource_group.rg.name
-  sku_name                = "Standard"
-  idle_timeout_in_minutes = 4
-  zones                   = var.aks_natgw_public_ip_zone
-
-  tags = var.tags
-}
-
-resource "azurerm_nat_gateway_public_ip_association" "natgw" {
-  nat_gateway_id       = azurerm_nat_gateway.natgw.id
-  public_ip_address_id = azurerm_public_ip.natgw.id
-}
-
-resource "azurerm_subnet_nat_gateway_association" "aks" {
-  subnet_id      = azurerm_subnet.subnet.id
-  nat_gateway_id = azurerm_nat_gateway.natgw.id
-}

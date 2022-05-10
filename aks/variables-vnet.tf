@@ -14,10 +14,6 @@ variable "aks_vnet_address_space" {
   type = list(string)
 }
 
-variable "aks_vnet_dns_servers" {
-  type = list(string)
-}
-
 variable "tags" {
   type = map(string)
 }
@@ -34,16 +30,6 @@ variable "vnet_service_endpoints" {
   type = list(string)
 }
 
-
-variable "aks_natgw_public_ip_zone" {
-  type = list(string)
-}
-
-variable "aks_nat_gateway_name" {
-  type = string
-}
-
-
 variable "client_id" {
   type = string
 }
@@ -59,5 +45,4 @@ variable "subscription_id" {
 variable "tenant_id" {
   type = string
 }
-
 

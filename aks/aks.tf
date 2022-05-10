@@ -1,27 +1,17 @@
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = var.aks_cluster_name
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  #  dns_prefix_private_cluster      = var.dns_prefix_private_cluster
-  dns_prefix                      = var.aks_cluster_dns_prefix
-  automatic_channel_upgrade       = var.automatic_channel_upgrade
-  azure_policy_enabled            = true
-  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-  kubernetes_version              = var.kubernetes_version
-  open_service_mesh_enabled       = true
-  oidc_issuer_enabled             = true
-  #  private_cluster_enabled             = true
-  #  private_cluster_public_fqdn_enabled = true
+  name                      = var.aks_cluster_name
+  location                  = azurerm_resource_group.rg.location
+  resource_group_name       = azurerm_resource_group.rg.name
+  dns_prefix                = var.aks_cluster_dns_prefix
+  automatic_channel_upgrade = var.automatic_channel_upgrade
+  azure_policy_enabled      = true
+  kubernetes_version        = var.kubernetes_version
+  open_service_mesh_enabled = true
+  oidc_issuer_enabled       = true
 
   network_profile {
     network_plugin = "azure"
     network_policy = "azure"
-    outbound_type  = "userAssignedNATGateway"
-
-    nat_gateway_profile {
-      idle_timeout_in_minutes   = 4
-      managed_outbound_ip_count = 1
-    }
   }
 
   microsoft_defender {
@@ -49,12 +39,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   default_node_pool {
-    name = "systempool"
-    type = "VirtualMachineScaleSets"
-    # node_count          = var.system_node_pool_node_count
-    vm_size             = var.system_node_pool_node_vm_size
-    enable_auto_scaling = true
-    #  max_pods                     = 50
+    name                         = "systempool"
+    type                         = "VirtualMachineScaleSets"
+    vm_size                      = var.system_node_pool_node_vm_size
+    enable_auto_scaling          = true
     max_count                    = 2
     min_count                    = 1
     only_critical_addons_enabled = true
@@ -63,7 +51,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb              = "50"
     os_sku                       = "Ubuntu"
     vnet_subnet_id               = azurerm_subnet.subnet.id
-#    zones                        = var.aks_availability_zones
 
     tags = {
       "nodepool" = "system"
@@ -78,9 +65,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   tags = var.tags
 
-  depends_on = [
-    azurerm_user_assigned_identity.uai
-  ]
+  depends_on = [azurerm_user_assigned_identity.uai]
 }
 
 
