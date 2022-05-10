@@ -242,7 +242,7 @@ stages:
         inputs:
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-          commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
+#          commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
           allowTelemetryCollection: false
           publishPlanResults: '$(gke_artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
@@ -276,7 +276,7 @@ stages:
               inputs:
                 command: 'apply'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-                commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
+#                commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
                 allowTelemetryCollection: false
 
   - stage: ArcPrerequisites
