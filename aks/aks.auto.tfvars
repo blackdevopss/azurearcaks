@@ -3,7 +3,6 @@ azure_region                         = "centralus"
 aks_subnet_name                      = "snet-azarc-aks"
 aks_vnet_name                        = "vnet-azarc-aks"
 aks_vnet_address_space               = ["10.150.0.0/19"]
-aks_vnet_dns_servers                 = ["168.63.129.16"]
 aks_nodepool_subnet_address_prefixes = ["10.150.0.0/21"]
 
 aks_cluster_name                   = "aks-azarc-mgmt"
