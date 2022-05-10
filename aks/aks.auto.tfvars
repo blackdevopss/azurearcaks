@@ -1,4 +1,4 @@
-resource_group_name                  = "rg-azarc-aks"
+resource_group_name                  = "rg-aks-clusters"
 azure_region                         = "centralus"
 aks_subnet_name                      = "snet-azarc-aks"
 aks_vnet_name                        = "vnet-azarc-aks"

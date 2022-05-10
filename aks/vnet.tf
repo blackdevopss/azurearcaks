@@ -1,9 +1,3 @@
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.azure_region
-  tags     = var.tags
-}
-
 resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-${var.aks_subnet_name}"
   location            = azurerm_resource_group.rg.location
