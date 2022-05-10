@@ -8,15 +8,6 @@ resource "aws_vpc" "eks" {
   }
 }
 
-resource "aws_vpc" "hub" {
-  cidr_block       = "192.168.0.0/16"
-  instance_tenancy = "default"
-
-  tags = {
-    Name = "vpc-hub-us-east-1"
-  }
-}
-
 // SUBNETS
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.eks.id
@@ -27,12 +18,21 @@ resource "aws_subnet" "public" {
   }
 }
 
-resource "aws_subnet" "private" {
+resource "aws_subnet" "private_east_1a" {
   vpc_id     = aws_vpc.eks.id
   cidr_block = "10.0.128.0/20"
 
   tags = {
     Name = "snet-eks-private-us-east-1a"
+  }
+}
+
+resource "aws_subnet" "private_east_1b" {
+  vpc_id     = aws_vpc.eks.id
+  cidr_block = "10.0.64.0/20"
+
+  tags = {
+    Name = "snet-eks-private-us-east-1b"
   }
 }
 
@@ -46,8 +46,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-
-/*
 // NAT GATEWAY
 resource "aws_nat_gateway" "private" {
   connectivity_type = "private"
@@ -57,4 +55,3 @@ resource "aws_nat_gateway" "private" {
     "Name" = "ngw-eks-private-us-east-1"
   }
 }
-*/
