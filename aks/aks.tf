@@ -63,7 +63,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb              = "50"
     os_sku                       = "Ubuntu"
     vnet_subnet_id               = azurerm_subnet.subnet.id
-    zones                        = var.aks_availability_zones
+#    zones                        = var.aks_availability_zones
 
     tags = {
       "nodepool" = "system"

@@ -16,9 +16,9 @@ variable "kubernetes_version" {
   type = string
 }
 
-variable "aks_availability_zones" {
-  type = list(string)
-}
+#variable "aks_availability_zones" {
+#  type = list(string)
+#}
 
 variable "aks_cluster_admin_group_object_ids" {
   type = list(string)
