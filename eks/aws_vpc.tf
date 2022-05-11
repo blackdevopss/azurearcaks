@@ -13,14 +13,14 @@ resource "aws_vpc" "eks" {
 
 // PUBLIC SUBNETS
 resource "aws_subnet" "public" {
+  count                   = 2
   vpc_id                  = aws_vpc.eks.id
-  count                   = length(var.eks_public_subnets_cidr)
-  cidr_block              = element(var.eks_public_subnets_cidr, count.index)
-  availability_zone       = element(var.availability_zones, count.index)
+  cidr_block              = var.eks_public_subnets_cidr[count.index]
+  availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "snet-${local.prefix}-${local.Env}-${element(var.availability_zones, count.index)}-pub"
+    Name = "snet-${local.prefix}-${local.Env}-${local.region_prefix}-pub[count.index]"
     Env  = "${local.Env}"
     Type = "Public"
   }
@@ -29,13 +29,13 @@ resource "aws_subnet" "public" {
 // PRIVATE SUBNETS
 resource "aws_subnet" "private" {
   vpc_id                  = aws_vpc.eks.id
-  count                   = length(var.eks_private_subnets_cidr)
-  cidr_block              = element(var.eks_private_subnets_cidr, count.index)
-  availability_zone       = element(var.availability_zones, count.index)
+  count                   = 2
+  cidr_block              = var.eks_private_subnets_cidr[count.index]
+  availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "snet-${local.prefix}-${local.Env}-${element(var.availability_zones, count.index)}-priv"
+    Name = "snet-${local.prefix}-${local.Env}-${local.region_prefix}-priv[count.index]"
     Env  = "${local.Env}"
     Type = "Private"
   }
