@@ -291,11 +291,11 @@ stages:
 
   - stage: ArcPrerequisites
     pool: blackdevops
-    displayName: Install Prerequisites
+    displayName: Install AzureRM Providers
     dependsOn: ['ReleaseAKS', "ReleaseEKS", 'ReleaseGKE']
+    condition: succeeded('ReleaseAKS', "ReleaseEKS", 'ReleaseGKE')
     jobs:
     - job: Install_Kubernetes_Providers
-      pool: blackdevops
       steps:
       - task: AzureCLI@2
         displayName: Install Azure Arc Prerequisites
