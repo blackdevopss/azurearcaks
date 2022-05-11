@@ -31,7 +31,7 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
 
-  - stage: ReleaseEKS
+  - stage: DestroyEKS
     displayName: Stage - TF Destroy EKS
     jobs:
     - deployment: Destroy
@@ -57,64 +57,14 @@ stages:
                 commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
                 allowTelemetryCollection: false
 
-  - stage: ValidateAKS
+  - stage: DestroyAKS
     pool: blackdevops
-    dependsOn: ['Initialize']
-    condition: succeeded('Initialize')
-    displayName: Stage - TF Validate AKS
+    displayName: Stage - TF Destroy AKS
+    dependsOn: [DestroyEKS]
+    condition: succeeded('DestroyEKS')
     jobs:
-    - job: Validate_TF_Config
-      steps:
-      - task: TerraformCLI@0
-        displayName: Init
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
-          allowTelemetryCollection: false
-
-  - stage: PlanAKS
-    pool: blackdevops
-    displayName: Stage - TF Plan AKS
-    dependsOn: [ValidateAKS]
-    condition: succeeded('ValidateAKS')
-    jobs:
-    - job: Generate_TF_Plan
-      steps:
-      - task: TerraformCLI@0
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Terraform Plan
-        inputs:
-          command: 'plan'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
-          commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
-          allowTelemetryCollection: false
-          publishPlanResults: '$(aks_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/aks'
-          artifact: '$(Build.SourceBranchName)_$(aks_artifact_name)'
-
-  - stage: ReleaseAKS
-    pool: blackdevops
-    displayName: Stage - TF Apply AKS
-    dependsOn: [PlanAKS]
-    condition: succeeded('PlanAKS')
-    jobs:
-    - deployment: Apply
-      displayName: 'Terraform Apply'
+    - deployment: Destroy
+      displayName: 'Terraform Destroy'
       environment: azure
       pool: blackdevops
       strategy:
@@ -129,78 +79,20 @@ stages:
                 backendType: 'selfConfigured'
                 allowTelemetryCollection: false 
             - task: TerraformCLI@0
-              displayName: Apply
+              displayName: Destroy
               inputs:
                 command: 'destroy'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
                 commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
                 allowTelemetryCollection: false
 
-  - stage: ValidateGKE
-    dependsOn: ['Initialize']
-    condition: succeeded('Initialize')
-    displayName: Stage - TF Validate GKE
+  - stage: DestroyGKE
+    displayName: Stage - TF Destroy GKE
+    dependsOn: [DestroyAKS]
+    condition: succeeded('DestroyAKS')
     jobs:
-    - job: Validate_TF_Config
-      steps:
-      - task: downloadsSecureFile@0
-        displayName: DownloadGCPCredentials
-        inputs:
-          fileInput: 'slsfs-dev-365463f644a0.json'
-          targetPath: '$(System.DefaultWorkingDirectory)/gke'
-      - task: TerraformCLI@0
-        displayName: Init
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-          allowTelemetryCollection: false
-
-  - stage: PlanGKE
-    displayName: Stage - TF Plan GKE
-    dependsOn: [ValidateGKE]
-    condition: succeeded('ValidateGKE')
-    jobs:
-    - job: Generate_TF_Plan
-      steps:
-      - task: downloadsSecureFile@0
-        displayName: DownloadGCPCredentials
-        inputs:
-          fileInput: 'slsfs-dev-365463f644a0.json'
-          targetPath: '$(System.DefaultWorkingDirectory)/gke'
-      - task: TerraformCLI@0
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Terraform Plan
-        inputs:
-          command: 'plan'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
-#          commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
-          allowTelemetryCollection: false
-          publishPlanResults: '$(gke_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/gke'
-          artifact: '$(Build.SourceBranchName)_$(gke_artifact_name)'
-
-  - stage: ReleaseGKE
-    displayName: Stage - TF Apply GKE
-    dependsOn: [PlanGKE]
-    condition: succeeded('PlanGKE')
-    jobs:
-    - deployment: Apply
-      displayName: 'Terraform Apply'
+    - deployment: Destroy
+      displayName: 'Terraform Destroy'
       environment: gcp
       pool: blackdevops
       strategy:
@@ -220,7 +112,7 @@ stages:
                 backendType: 'selfConfigured'
                 allowTelemetryCollection: false 
             - task: TerraformCLI@0
-              displayName: Apply
+              displayName: Destroy
               inputs:
                 command: 'destroy'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
