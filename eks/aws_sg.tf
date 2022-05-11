@@ -9,7 +9,7 @@ resource "aws_security_group" "remote_access" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.dynamic_public_ip]
+    cidr_blocks = [var.ip_white_list]
   }
 
   ingress {
@@ -17,7 +17,7 @@ resource "aws_security_group" "remote_access" {
     from_port   = 3389
     to_port     = 3389
     protocol    = "tcp"
-    cidr_blocks = [var.dynamic_public_ip]
+    cidr_blocks = [var.ip_white_list]
   }
 
   egress {

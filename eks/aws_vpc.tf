@@ -1,68 +1,67 @@
 // VPC
 resource "aws_vpc" "eks" {
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "default"
+  cidr_block           = var.eks_vpc_cidr
+  instance_tenancy     = var.instance_tenancy
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = {
-    Name = "vpc-eks-us-west-1"
+    Name        = "vpc-${local.prefix}-${local.Env}-${local.region_prefix}"
+    Environment = "${local.Env}"
   }
 }
 
-// SUBNETS
+// PUBLIC SUBNETS
 resource "aws_subnet" "public" {
-  vpc_id     = aws_vpc.eks.id
-  cidr_block = "10.0.0.0/20"
+  vpc_id                  = aws_vpc.eks.id
+  count                   = length(var.eks_public_subnets_cidr)
+  cidr_block              = element(var.eks_public_subnets_cidr, count.index)
+  availability_zone       = element(var.availability_zones, count.index)
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "snet-eks-public-us-west-1a"
+    Name = "snet-${local.prefix}-${local.Env}-${element(var.availability_zones, count.index)}-pub"
+    Env  = "${local.Env}"
   }
 }
 
-resource "aws_subnet" "private_east_1a" {
-  vpc_id            = aws_vpc.eks.id
-  cidr_block        = "10.0.16.0/20"
-  availability_zone = "us-west-1a"
+// PRIVATE SUBNETS
+resource "aws_subnet" "private" {
+  vpc_id                  = aws_vpc.eks.id
+  count                   = length(var.eks_private_subnets_cidr)
+  cidr_block              = element(var.eks_private_subnets_cidr, count.index)
+  availability_zone       = element(var.availability_zones, count.index)
+  map_public_ip_on_launch = false
 
   tags = {
-    Name = "snet-eks-private-us-west-1a"
+    Name = "snet-${local.prefix}-${local.Env}-${element(var.availability_zones, count.index)}-priv"
+    Env  = "${local.Env}"
   }
 }
 
-resource "aws_subnet" "private_east_1b" {
-  vpc_id            = aws_vpc.eks.id
-  cidr_block        = "10.0.32.0/20"
-  availability_zone = "us-west-1b"
-
-  tags = {
-    Name = "snet-eks-private-us-west-1b"
-  }
-}
-
-// INTERNET GATEWAY
+// NAT GATEWAY
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.eks.id
 
   tags = {
-    Name = "igw-eks-vpc-us-west-1"
+    Name = "igw-${local.prefix}-${local.Env}-${local.region_prefix}"
+    Env  = "${local.Env}"
   }
 }
 
-// NAT GATEWAY
-resource "aws_nat_gateway" "private_1a" {
-  connectivity_type = "private"
-  subnet_id         = aws_subnet.private_east_1a.id
-
-  tags = {
-    "Name" = "ngw-eks-private-us-west-1a"
-  }
+resource "aws_eip" "nat_eip" {
+  vpc        = true
+  depends_on = [aws_internet_gateway.igw]
 }
 
 // NAT GATEWAY
-resource "aws_nat_gateway" "private_1b" {
-  connectivity_type = "private"
-  subnet_id         = aws_subnet.private_east_1b.id
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = element(aws_subnet.public.*.id, 0)
+  depends_on    = [aws_internet_gateway.igw]
 
   tags = {
-    "Name" = "ngw-eks-private-us-west-1b"
+    Name = "ngw-${local.prefix}-${local.Env}-${local.region_prefix}"
+    Env  = "${local.Env}"
   }
 }
