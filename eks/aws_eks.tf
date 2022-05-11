@@ -1,29 +1,38 @@
-resource "aws_eks_cluster" "eks" {
-  count    = 1
-  name     = "${local.prefix}-${local.Env}-${local.region_prefix}"
-  role_arn = aws_iam_role.eks.arn
-  version  = var.eks_version
+module "eks" {
+  source          = "terraform-aws-modules/eks/aws"
+  version         = "18.20.5"
+  cluster_name    = "${local.prefix}-${local.Env}-${local.region_prefix}"
+  cluster_version = "1.22"
+  subnets         = module.vpc.private_subnets
 
+  vpc_id = module.vpc.vpc_id
 
-
-  vpc_config {
-    subnet_ids              = [aws_subnet.private[count.index].id]
-    endpoint_private_access = var.endpoint_private_access
-    endpoint_public_access  = var.endpoint_public_access
-    public_access_cidrs     = var.public_access_cidrs
-    security_group_ids      = [aws_security_group.eks.id]
+  workers_group_defaults = {
+    root_volume_type = "gp2"
   }
 
-  kubernetes_network_config {
-    service_ipv4_cidr = var.service_ipv4_cidr
-    ip_family         = var.eks_ip_family
-  }
-
-  # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
-  # Otherwise, EKS will not be able to properly delete EKS managed EC2 infrastructure such as Security Groups.
-  depends_on = [
-    aws_iam_role_policy_attachment.eks_AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.eks_AmazonEKSVPCResourceController,
+  worker_groups = [
+    {
+      name                          = "eks-worker-group-1"
+      instance_type                 = "t2.small"
+      additional_userdata           = "echo foo bar"
+      additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+      asg_desired_capacity          = 2
+    },
+    {
+      name                          = "eks-worker-group-2"
+      instance_type                 = "t2.medium"
+      additional_userdata           = "echo foo bar"
+      additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
+      asg_desired_capacity          = 1
+    },
   ]
 }
 
+data "aws_eks_cluster" "cluster" {
+  name = module.eks.cluster_id
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_id
+}

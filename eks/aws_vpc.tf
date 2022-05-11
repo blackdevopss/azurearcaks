@@ -1,3 +1,4 @@
+/*
 // VPC
 resource "aws_vpc" "eks" {
   cidr_block           = var.eks_vpc_cidr
@@ -71,3 +72,4 @@ resource "aws_nat_gateway" "ngw" {
     Env  = "${local.Env}"
   }
 }
+*/

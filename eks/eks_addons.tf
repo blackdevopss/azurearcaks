@@ -1,3 +1,4 @@
+/*
 resource "aws_eks_addon" "vpc_cni" {
   count        = 1
   cluster_name = "${local.prefix}-${local.Env}-${local.region_prefix}"
@@ -5,3 +6,4 @@ resource "aws_eks_addon" "vpc_cni" {
 
   depends_on = [aws_eks_cluster.eks]
 }
+*/

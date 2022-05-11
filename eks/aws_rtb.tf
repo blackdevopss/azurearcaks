@@ -1,3 +1,4 @@
+/*
 // ROUTE TABLES
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.eks.id
@@ -30,3 +31,4 @@ resource "aws_route" "private_egress" {
   nat_gateway_id         = aws_nat_gateway.ngw.id
 
 }
+*/
