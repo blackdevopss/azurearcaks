@@ -1,6 +1,6 @@
 resource "azuredevops_build_definition" "main" {
   project_id      = data.azuredevops_project.project.id
-  name            = "MultiCloud - K8S Build"
+  name            = "Multi-Cloud K8S - Create"
   agent_pool_name = data.azuredevops_agent_pool.blackdevops.name
 
   ci_trigger {
