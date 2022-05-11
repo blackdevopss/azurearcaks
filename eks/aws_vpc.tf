@@ -19,8 +19,9 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_subnet" "private_east_1a" {
-  vpc_id     = aws_vpc.eks.id
-  cidr_block = "10.0.16.0/20"
+  vpc_id            = aws_vpc.eks.id
+  cidr_block        = "10.0.16.0/20"
+  availability_zone = "us-east-1a"
 
   tags = {
     Name = "snet-eks-private-us-east-1a"
@@ -28,8 +29,9 @@ resource "aws_subnet" "private_east_1a" {
 }
 
 resource "aws_subnet" "private_east_1b" {
-  vpc_id     = aws_vpc.eks.id
-  cidr_block = "10.0.32.0/20"
+  vpc_id            = aws_vpc.eks.id
+  cidr_block        = "10.0.32.0/20"
+  availability_zone = "us-east-1b"
 
   tags = {
     Name = "snet-eks-private-us-east-1b"

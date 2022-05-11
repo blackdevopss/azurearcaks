@@ -13,4 +13,8 @@ gke_vpc_routing_mode            = "REGIONAL"
 delete_default_routes_on_create = true
 enable_private_ip_google_access = true
 
-
+gcp_apis_to_enable = [
+  "dns.googleapis.com",
+  "servicedirectory.googleapis.com",
+  "servicenetworking.googleapis.com",
+]

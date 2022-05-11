@@ -46,3 +46,6 @@ variable "gke_subnet_secondary_ip_range" {
   type = string
 }
 
+variable "gcp_apis_to_enable" {
+  type = list(string)
+}
