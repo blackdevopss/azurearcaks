@@ -1,0 +1,78 @@
+name: Destroy_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r) 
+
+variables:
+- group: TerraformVarsGroup
+- name: repo_id
+  value: blackdevops/azurearcaks
+
+pool:
+  name: aws
+
+stages:    
+
+  - stage: DestroyEKS
+    displayName: Stage - TF Destroy EKS
+    jobs:
+    - deployment: Destroy
+      displayName: 'Terraform Destroy'
+      environment: aws
+      pool: aws
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: TerraformCLI@0
+              displayName: Destroy
+              inputs:
+                command: 'destroy'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
+                commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
+                allowTelemetryCollection: false
+
+  - stage: DestroyAKS
+    pool: blackdevops
+    displayName: Stage - TF Destroy AKS
+    dependsOn: [DestroyEKS]
+    condition: succeeded('DestroyEKS')
+    jobs:
+    - deployment: Destroy
+      displayName: 'Terraform Destroy'
+      environment: azure
+      pool: blackdevops
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: 'destroy'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/aks'
+                commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
+                allowTelemetryCollection: false
+
+  - stage: DestroyGKE
+    displayName: Stage - TF Destroy GKE
+    dependsOn: [DestroyAKS]
+    condition: succeeded('DestroyAKS')
+    jobs:
+    - deployment: Destroy
+      displayName: 'Terraform Destroy'
+      environment: gcp
+      pool: blackdevops
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: downloadsSecureFile@0
+              displayName: DownloadGCPCredentials
+              inputs:
+                fileInput: 'slsfs-dev-365463f644a0.json'
+                targetPath: '$(System.DefaultWorkingDirectory)/gke'
+            - task: TerraformCLI@0
+              displayName: Destroy
+              inputs:
+                command: 'destroy'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+#                commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
+                allowTelemetryCollection: false
