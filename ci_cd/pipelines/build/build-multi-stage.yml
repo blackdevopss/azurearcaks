@@ -226,11 +226,11 @@ stages:
     jobs:
     - job: Generate_TF_Plan
       steps:
-      - task: DownloadSecureFile@1
-        name: gcp_credentials
-        displayName: DownloadGCPCredentialFile
+      - task: downloadsSecureFile@0
+        displayName: DownloadGCPCredentials
         inputs:
-          secureFile: 'slsfs-dev-365463f644a0.json'
+          fileInput: 'slsfs-dev-365463f644a0.json'
+          targetPath: '$(System.DefaultWorkingDirectory)/gke'
       - task: TerraformCLI@0
         inputs:
           command: 'init'
@@ -264,6 +264,11 @@ stages:
         runOnce:
           deploy:
             steps:
+            - task: downloadsSecureFile@0
+              displayName: DownloadGCPCredentials
+              inputs:
+                fileInput: 'slsfs-dev-365463f644a0.json'
+                targetPath: '$(System.DefaultWorkingDirectory)/gke'
             - task: TerraformCLI@0
               displayName: Init
               inputs:

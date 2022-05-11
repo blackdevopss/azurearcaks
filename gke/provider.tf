@@ -9,7 +9,7 @@ terraform {
 
 provider "google" {
   project     = var.gcp_project_id
-  credentials = ""
+  credentials = file("slsfs-dev-365463f644a0.json")
   region      = var.gcp_region
   # Configuration options
 }
