@@ -4,7 +4,7 @@ ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDBEpMg2U7xIPrQ0VVJoYExJE
 
 eks_private_subnets_cidr = ["10.0.32.0/20", "10.0.64.0/20"]
 eks_public_subnets_cidr  = ["10.0.0.0/20", "10.0.16.0/20"]
-availability_zones       = ["us-west-1a", "us-west-1b"]
+availability_zones       = ["us-west-1b", "us-west-1c"]
 eks_vpc_cidr             = "10.0.0.0/16"
 instance_tenancy         = "default"
 endpoint_private_access  = true

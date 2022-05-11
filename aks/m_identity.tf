@@ -11,6 +11,6 @@ resource "azurerm_user_assigned_identity" "uai" {
 resource "azurerm_role_assignment" "azdo_agent" {
   scope                = data.azurerm_subscription.current.subscription_id
   role_definition_name = "Owner"
-  principal_id         = data.azurerm_virtual_machine.azdo_agent.principal_id
+  principal_id         = data.azurerm_virtual_machine.azdo_agent.identity[0].principal_id
 }
 

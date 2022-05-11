@@ -291,7 +291,7 @@ stages:
 
   - stage: ArcPrerequisites
     pool: blackdevops
-    displayName: AzureArc Onboarding
+    displayName: Azure Arc Onboarding
     dependsOn: ['ReleaseAKS', 'ReleaseEKS', 'ReleaseGKE']
     condition: succeeded('ReleaseAKS', 'ReleaseEKS', 'ReleaseGKE')
     jobs:
