@@ -31,61 +31,11 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
 
-  - stage: ValidateEKS
-    dependsOn: [Initialize]
-    condition: succeeded('Initialize')
-    displayName: Stage - TF Validate EKS
-    jobs:
-    - job: Validate_TF_Config
-      steps:
-      - task: TerraformCLI@0
-        displayName: Init
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
-          allowTelemetryCollection: false
-
-  - stage: PlanEKS
-    displayName: Stage - TF Plan EKS
-    dependsOn: [ValidateEKS]
-    condition: succeeded('ValidateEKS')
-    jobs:
-    - job: Generate_TF_Plan
-      steps:
-      - task: TerraformCLI@0
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Terraform Plan
-        inputs:
-          command: 'plan'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
-          commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
-          allowTelemetryCollection: false
-          publishPlanResults: '$(eks_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/eks'
-          artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
-
   - stage: ReleaseEKS
-    displayName: Stage - TF Apply EKS
-    dependsOn: [PlanEKS]
-    condition: succeeded('PlanEKS')
+    displayName: Stage - TF Destroy EKS
     jobs:
-    - deployment: Apply
-      displayName: 'Terraform Apply'
+    - deployment: Destroy
+      displayName: 'Terraform Destroy'
       environment: aws
       pool: aws
       strategy:
@@ -100,7 +50,7 @@ stages:
                 backendType: 'selfConfigured'
                 allowTelemetryCollection: false 
             - task: TerraformCLI@0
-              displayName: Apply
+              displayName: Destroy
               inputs:
                 command: 'destroy'
                 workingDirectory: '$(System.DefaultWorkingDirectory)/eks'
