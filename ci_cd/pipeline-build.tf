@@ -1,4 +1,4 @@
-resource "azuredevops_build_definition" "main" {
+resource "azuredevops_build_definition" "create" {
   project_id      = data.azuredevops_project.project.id
   name            = "Multi-Cloud K8S - Create"
   agent_pool_name = data.azuredevops_agent_pool.blackdevops.name

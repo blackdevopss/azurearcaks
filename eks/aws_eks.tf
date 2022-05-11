@@ -6,7 +6,7 @@ resource "aws_eks_cluster" "eks" {
 
 
   vpc_config {
-    subnet_ids              = [aws_subnet.private_east_1a.id, aws_subnet.private_east_1b.id]
+    subnet_ids              = [element(aws_subnet.private.*.id, count.index)]
     endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = var.endpoint_public_access
     public_access_cidrs     = var.public_access_cidrs
