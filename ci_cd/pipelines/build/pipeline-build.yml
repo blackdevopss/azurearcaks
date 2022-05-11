@@ -297,38 +297,18 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
-      - task: InvokeRESTAPI@1
-        displayName: EnableOIDCIssuerPreview
+      - task: AzureCLI@2
+        displayName: Install Azure Arc Prerequisites
         inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
-          waitForCompletion: 'false'
-      - task: InvokeRESTAPI@1
-        displayName: Microsoft.Kubernetes
-        inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Kubernetes/register?api-version=2021-04-01'
-          waitForCompletion: 'false'
-      - task: InvokeRESTAPI@1
-        displayName: Microsoft.KubernetesConfiguration
-        inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.KubernetesConfiguration/register?api-version=2021-04-01'
-          waitForCompletion: 'false' 
-      - task: InvokeRESTAPI@1
-        displayName: Microsoft.ExtendedLocation
-        inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.ExtendedLocation/register?api-version=2021-04-01'
-          waitForCompletion: 'false'
+          azureSubscription: 'SVCConn-Dev-BlackDevOps'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az login --identity
+            az extension add --name connectedk8s
+            az provider register --namespace Microsoft.Kubernetes
+            az provider register --namespace Microsoft.KubernetesConfiguration
+            az provider register --namespace Microsoft.ExtendedLocation
 
   - stage: ConnectEKS
     pool: blackdevops
