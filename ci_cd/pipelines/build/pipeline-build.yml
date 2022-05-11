@@ -31,7 +31,7 @@ pool:
 stages:    
 
   - stage: Initialize
-    displayName: Stage - TF Init
+    displayName: Stage - TF Initialize
     jobs:
     - job: Initialize_Terraform
       steps:
@@ -46,7 +46,7 @@ stages:
   - stage: ValidateEKS
     dependsOn: [Initialize]
     condition: succeeded('Initialize')
-    displayName: Stage - TF Validate EKS
+    displayName: Validate EKS
     jobs:
     - job: Validate_TF_Config
       steps:
@@ -65,7 +65,7 @@ stages:
           allowTelemetryCollection: false
 
   - stage: PlanEKS
-    displayName: Stage - TF Plan EKS
+    displayName: Plan EKS
     dependsOn: [ValidateEKS]
     condition: succeeded('ValidateEKS')
     jobs:
@@ -92,7 +92,7 @@ stages:
           artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
 
   - stage: ReleaseEKS
-    displayName: Stage - TF Apply EKS
+    displayName: Create EKS
     dependsOn: [PlanEKS]
     condition: succeeded('PlanEKS')
     jobs:
@@ -123,7 +123,7 @@ stages:
     pool: blackdevops
     dependsOn: ['Initialize']
     condition: succeeded('Initialize')
-    displayName: Stage - TF Validate AKS
+    displayName: Validate AKS
     jobs:
     - job: Validate_TF_Config
       steps:
@@ -143,7 +143,7 @@ stages:
 
   - stage: PlanAKS
     pool: blackdevops
-    displayName: Stage - TF Plan AKS
+    displayName: Plan AKS
     dependsOn: [ValidateAKS]
     condition: succeeded('ValidateAKS')
     jobs:
@@ -171,7 +171,7 @@ stages:
 
   - stage: ReleaseAKS
     pool: blackdevops
-    displayName: Stage - TF Apply AKS
+    displayName: Create AKS
     dependsOn: [PlanAKS]
     condition: succeeded('PlanAKS')
     jobs:
@@ -201,7 +201,7 @@ stages:
   - stage: ValidateGKE
     dependsOn: ['Initialize']
     condition: succeeded('Initialize')
-    displayName: Stage - TF Validate GKE
+    displayName: Validate GKE
     jobs:
     - job: Validate_TF_Config
       steps:
@@ -225,7 +225,7 @@ stages:
           allowTelemetryCollection: false
 
   - stage: PlanGKE
-    displayName: Stage - TF Plan GKE
+    displayName: Plan GKE
     dependsOn: [ValidateGKE]
     condition: succeeded('ValidateGKE')
     jobs:
@@ -257,7 +257,7 @@ stages:
           artifact: '$(Build.SourceBranchName)_$(gke_artifact_name)'
 
   - stage: ReleaseGKE
-    displayName: Stage - TF Apply GKE
+    displayName: Create GKE
     dependsOn: [PlanGKE]
     condition: succeeded('PlanGKE')
     jobs:
@@ -291,7 +291,7 @@ stages:
 
   - stage: ArcPrerequisites
     pool: blackdevops
-    displayName: Stage - Azure Arc Tools
+    displayName: Arc Prerequisites
     dependsOn: ['ReleaseAKS', "ReleaseEKS", 'ReleaseGKE']
     jobs:
     - job: Install_Kubernetes_Providers

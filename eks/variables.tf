@@ -32,3 +32,31 @@ variable "eks_vpc_cidr" {
 variable "instance_tenancy" {
   type = string
 }
+
+variable "eks_cluster_names" {
+  type = list(string)
+}
+
+variable "endpoint_private_access" {
+  type = bool
+}
+
+variable "endpoint_public_access" {
+  type = bool
+}
+
+variable "public_access_cidrs" {
+  type = string
+}
+
+variable "service_ipv4_cidr" {
+  type = string
+}
+
+variable "eks_version" {
+  type = string
+}
+
+variable "eks_ip_family" {
+  type = string
+}
