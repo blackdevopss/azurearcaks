@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "snet-${local.prefix}-${local.Env}-${var.availability_zones}-pub[count.index]"
+    Name = "snet-${local.prefix}-${local.Env}-${var.availability_zones[count.index]}-pub"
     Env  = "${local.Env}"
     Type = "Public"
   }
@@ -35,7 +35,7 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "snet-${local.prefix}-${local.Env}-${var.availability_zones}-priv"
+    Name = "snet-${local.prefix}-${local.Env}-${var.availability_zones[count.index]}-priv"
     Env  = "${local.Env}"
     Type = "Private"
   }
