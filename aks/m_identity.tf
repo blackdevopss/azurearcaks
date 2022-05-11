@@ -8,9 +8,3 @@ resource "azurerm_user_assigned_identity" "uai" {
 
 
 
-resource "azurerm_role_assignment" "azdo_agent" {
-  scope                = "/subscriptions/${data.azurerm_subscription.current.subscription_id}"
-  role_definition_name = "Owner"
-  principal_id         = "92f722fb-fb37-4e00-9b53-f2f84a720dba"
-}
-
