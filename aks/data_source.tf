@@ -18,7 +18,7 @@ data "azurerm_virtual_machine" "azdo_agent" {
 }
 
 output "vm_system_identity_id" {
-  value = data.azurerm_virtual_machine.azdo_agent.principal_id
+  value = data.azurerm_virtual_machine.azdo_agent.identity.*.principal_id
 }
 
 data "azurerm_subscription" "current" {
@@ -27,3 +27,4 @@ data "azurerm_subscription" "current" {
 output "current_subscription_display_name" {
   value = data.azurerm_subscription.current.subscription_id
 }
+
