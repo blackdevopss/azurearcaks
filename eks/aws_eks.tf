@@ -1,6 +1,6 @@
 resource "aws_eks_cluster" "eks" {
   count    = 1
-  name     = "${local.prefix}-${local.env}-${local.region_prefix}"
+  name     = "${local.prefix}-${local.Env}-${local.region_prefix}"
   role_arn = aws_iam_role.eks.arn
   version  = var.eks_version
 
