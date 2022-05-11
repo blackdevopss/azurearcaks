@@ -36,6 +36,7 @@ resource "aws_subnet" "private" {
   tags = {
     Name = "snet-${local.prefix}-${local.Env}-${element(var.availability_zones, count.index)}-priv"
     Env  = "${local.Env}"
+    type = "Private"
   }
 }
 
