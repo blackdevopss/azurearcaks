@@ -41,6 +41,10 @@ resource "aws_subnet" "private" {
   }
 }
 
+output "vpc_piv_subnet_ids" {
+  value = aws_subnet.private[*].id
+}
+
 // NAT GATEWAY
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.eks.id
