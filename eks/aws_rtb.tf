@@ -4,7 +4,7 @@ resource "aws_route_table" "public" {
 
 
   tags = {
-    Name = "rtb-eks-public-us-west-1"
+    Name = "rtb-${local.prefix}-${local.Env}-pub-${local.region_prefix}"
   }
 }
 
@@ -12,7 +12,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.eks.id
 
   tags = {
-    Name = "rtb-eks-private-us-west-1"
+    Name = "rtb-${local.prefix}-${local.Env}-priv-${local.region_prefix}"
   }
 }
 
