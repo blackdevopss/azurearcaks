@@ -291,11 +291,11 @@ stages:
 
   - stage: ArcPrerequisites
     pool: blackdevops
-    displayName: Install AzureRM Providers
-    dependsOn: ['ReleaseAKS', "ReleaseEKS", 'ReleaseGKE']
-    condition: succeeded('ReleaseAKS', "ReleaseEKS", 'ReleaseGKE')
+    displayName: AzureArc Onboarding
+    dependsOn: ['ReleaseAKS', 'ReleaseEKS', 'ReleaseGKE']
+    condition: succeeded('ReleaseAKS', 'ReleaseEKS', 'ReleaseGKE')
     jobs:
-    - job: Install_Kubernetes_Providers
+    - job: Install_AzureRM_K8s_Providers
       steps:
       - task: AzureCLI@2
         displayName: Install Azure Arc Prerequisites
@@ -315,8 +315,8 @@ stages:
     displayName: Connect EKS
     dependsOn: ['ArcPrerequisites']
     jobs:
-    - job: Install_Kubernetes_Providers
-      pool: server
+    - job: Connect EKS 
+      pool: blackdevops
       steps:
       - task: AzureCLI@2
         inputs:
@@ -337,8 +337,8 @@ stages:
     displayName: Connect AKS
     dependsOn: ['ArcPrerequisites']
     jobs:
-    - job: Install_Kubernetes_Providers
-      pool: server
+    - job: Connect AKS
+      pool: blackdevops
       steps:
       - task: AzureCLI@2
         inputs:
@@ -359,8 +359,8 @@ stages:
     displayName: Connect GKE
     dependsOn: ['ArcPrerequisites']
     jobs:
-    - job: Install_Kubernetes_Providers
-      pool: server
+    - job: Connect GKE
+      pool: blackdevops
       steps:
       - task: AzureCLI@2
         inputs:
