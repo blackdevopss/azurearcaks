@@ -7,7 +7,7 @@ resource "aws_eks_cluster" "eks" {
 
 
   vpc_config {
-    subnet_ids              = [data.aws_subnet.private.ids]
+    subnet_ids              = [data.aws_subnets.private.ids]
     endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = var.endpoint_public_access
     public_access_cidrs     = var.public_access_cidrs
@@ -29,7 +29,7 @@ resource "aws_eks_cluster" "eks" {
 
 data "aws_subnets" "private" {
   filter {
-    name   = "tag:type"
+    name   = "tag:Type"
     values = ["Private"]
   }
 
@@ -37,5 +37,5 @@ data "aws_subnets" "private" {
 }
 
 output "private_subnet_ids" {
-  value = data.aws_subnet.private.ids
+  value = data.aws_subnets.private.ids
 }
