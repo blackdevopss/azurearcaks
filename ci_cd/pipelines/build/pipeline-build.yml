@@ -338,6 +338,14 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
+      - task: InvokeRESTAPI@1
+        displayName: EnableOIDCIssuerPreview
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
+          waitForCompletion: 'false'
 
   - stage: ConnectEKS
     pool: blackdevops
@@ -347,6 +355,14 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
+      - task: InvokeRESTAPI@1
+        displayName: EnableOIDCIssuerPreview
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
+          waitForCompletion: 'false'
 
   - stage: ConnectGKE
     pool: blackdevops
@@ -356,4 +372,11 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
-
+      - task: InvokeRESTAPI@1
+        displayName: EnableOIDCIssuerPreview
+        inputs:
+          connectionType: 'connectedServiceNameARM'
+          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
+          method: 'POST'
+          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
+          waitForCompletion: 'false'
