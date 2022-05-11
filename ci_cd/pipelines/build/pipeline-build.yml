@@ -338,14 +338,19 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
-      - task: InvokeRESTAPI@1
-        displayName: EnableOIDCIssuerPreview
+      - task: AzureCLI@2
         inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
-          waitForCompletion: 'false'
+          azureSubscription: 'SVCConn-Dev-BlackDevOps'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            # Log into Azure
+            az login --identity
+            # Set Azure subscription
+            az account set --subscription 1a412c86-c1c2-4696-8a2f-0859ec44b5c4            
+            # Create connected cluster AWS
+            kubectl config use-context aws
+            az connectedk8s connect --name eks-poc-usw1 --resource-group rg-aks-clusters --location centralus   
 
   - stage: ConnectAKS
     pool: blackdevops
@@ -355,14 +360,19 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
-      - task: InvokeRESTAPI@1
-        displayName: EnableOIDCIssuerPreview
+      - task: AzureCLI@2
         inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
-          waitForCompletion: 'false'
+          azureSubscription: 'SVCConn-Dev-BlackDevOps'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            # Log into Azure
+            az login --identity
+            # Set Azure subscription
+            az account set --subscription 1a412c86-c1c2-4696-8a2f-0859ec44b5c4            
+            # Create connected cluster AZURE
+            kubectl config use-context azure
+            az connectedk8s connect --name aks-poc-usw1 --resource-group rg-aks-clusters --location centralus
 
   - stage: ConnectGKE
     pool: blackdevops
@@ -372,11 +382,16 @@ stages:
     - job: Install_Kubernetes_Providers
       pool: server
       steps:
-      - task: InvokeRESTAPI@1
-        displayName: EnableOIDCIssuerPreview
+      - task: AzureCLI@2
         inputs:
-          connectionType: 'connectedServiceNameARM'
-          azureServiceConnection: 'SVCConn-Dev-BlackDevOps'
-          method: 'POST'
-          urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.Features/providers/Microsoft.ContainerService/features/EnableOIDCIssuerPreview/register?api-version=2021-07-01'
-          waitForCompletion: 'false'
+          azureSubscription: 'SVCConn-Dev-BlackDevOps'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            # Log into Azure
+            az login --identity
+            # Set Azure subscription
+            az account set --subscription 1a412c86-c1c2-4696-8a2f-0859ec44b5c4              
+            # Create connected cluster GCP
+            kubectl config use-context gcp
+            az connectedk8s connect --name gcp-poc-usw1 --resource-group rg-aks-clusters --location centralus 
