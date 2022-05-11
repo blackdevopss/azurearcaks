@@ -291,7 +291,7 @@ stages:
 
   - stage: ArcPrerequisites
     pool: blackdevops
-    displayName: Register Arc Providers
+    displayName: Install Prerequisites
     dependsOn: ['ReleaseAKS', "ReleaseEKS", 'ReleaseGKE']
     jobs:
     - job: Install_Kubernetes_Providers
