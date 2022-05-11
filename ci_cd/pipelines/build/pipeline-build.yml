@@ -31,7 +31,7 @@ pool:
 stages:    
 
   - stage: Initialize
-    displayName: Stage - TF Initialize
+    displayName: Initialize
     jobs:
     - job: Initialize_Terraform
       steps:
