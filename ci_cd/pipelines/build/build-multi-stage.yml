@@ -205,6 +205,11 @@ stages:
     jobs:
     - job: Validate_TF_Config
       steps:
+      - task: downloadsSecureFile@0
+        displayName: DownloadGCPCredentials
+        inputs:
+          fileInput: 'slsfs-dev-365463f644a0.json'
+          targetPath: '$(System.DefaultWorkingDirectory)/gke'
       - task: TerraformCLI@0
         displayName: Init
         inputs:
