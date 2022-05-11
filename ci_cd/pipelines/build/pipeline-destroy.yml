@@ -21,6 +21,11 @@ stages:
         runOnce:
           deploy:
             steps:
+            - task: PublishPipelineArtifact@1
+              displayName: Publishing Terraform Plan
+              inputs:
+                targetPath: '$(System.DefaultWorkingDirectory)/eks'
+                artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
             - task: TerraformCLI@0
               displayName: Destroy
               inputs:
@@ -43,6 +48,11 @@ stages:
         runOnce:
           deploy:
             steps:
+            - task: PublishPipelineArtifact@1
+              displayName: Publishing Terraform Plan
+              inputs:
+                targetPath: '$(System.DefaultWorkingDirectory)/aks'
+                artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
             - task: TerraformCLI@0
               displayName: Apply
               inputs:
@@ -64,6 +74,11 @@ stages:
         runOnce:
           deploy:
             steps:
+            - task: PublishPipelineArtifact@1
+              displayName: Publishing Terraform Plan
+              inputs:
+                targetPath: '$(System.DefaultWorkingDirectory)/gke'
+                artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
             - task: downloadsSecureFile@0
               displayName: DownloadGCPCredentials
               inputs:
