@@ -295,10 +295,10 @@ stages:
     dependsOn: ['ReleaseAKS', 'ReleaseEKS', 'ReleaseGKE']
     condition: succeeded('ReleaseAKS', 'ReleaseEKS', 'ReleaseGKE')
     jobs:
-    - job: Install_AzureRM_K8s_Providers
+    - job: Install_AzureArc_Prerequisites
       steps:
       - task: AzureCLI@2
-        displayName: Install Azure Arc Prerequisites
+        displayName: Install AzureArc Prerequisites
         inputs:
           azureSubscription: 'SVCConn-Dev-BlackDevOps'
           scriptType: 'bash'
@@ -315,7 +315,7 @@ stages:
     displayName: Connect EKS
     dependsOn: ['ArcPrerequisites']
     jobs:
-    - job: Connect EKS 
+    - job: Connect_EKS 
       pool: blackdevops
       steps:
       - task: AzureCLI@2
@@ -337,7 +337,7 @@ stages:
     displayName: Connect AKS
     dependsOn: ['ArcPrerequisites']
     jobs:
-    - job: Connect AKS
+    - job: Connect_AKS
       pool: blackdevops
       steps:
       - task: AzureCLI@2
@@ -359,7 +359,7 @@ stages:
     displayName: Connect GKE
     dependsOn: ['ArcPrerequisites']
     jobs:
-    - job: Connect GKE
+    - job: Connect_GKE
       pool: blackdevops
       steps:
       - task: AzureCLI@2
