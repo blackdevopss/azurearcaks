@@ -329,3 +329,31 @@ stages:
           method: 'POST'
           urlSuffix: '/subscriptions/1a412c86-c1c2-4696-8a2f-0859ec44b5c4/providers/Microsoft.ExtendedLocation/register?api-version=2021-04-01'
           waitForCompletion: 'false'
+
+  - stage: ConnectEKS
+    pool: blackdevops
+    displayName: Connect EKS
+    dependsOn: ['ArcPrerequisites']
+    jobs:
+    - job: Install_Kubernetes_Providers
+      pool: server
+      steps:
+
+  - stage: ConnectEKS
+    pool: blackdevops
+    displayName: Connect EKS
+    dependsOn: ['ArcPrerequisites']
+    jobs:
+    - job: Install_Kubernetes_Providers
+      pool: server
+      steps:
+
+  - stage: ConnectGKE
+    pool: blackdevops
+    displayName: Connect GKE
+    dependsOn: ['ArcPrerequisites']
+    jobs:
+    - job: Install_Kubernetes_Providers
+      pool: server
+      steps:
+
