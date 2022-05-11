@@ -46,7 +46,7 @@ variable "endpoint_public_access" {
 }
 
 variable "public_access_cidrs" {
-  type = string
+  type = list(string)
 }
 
 variable "service_ipv4_cidr" {
