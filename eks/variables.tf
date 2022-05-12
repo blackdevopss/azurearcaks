@@ -1,3 +1,4 @@
+/*
 variable "aws_region" { type = string }
 
 variable "ip_white_list" { type = string }
@@ -53,3 +54,4 @@ variable "eks_version" {
 variable "eks_ip_family" {
   type = string
 }
+*/
