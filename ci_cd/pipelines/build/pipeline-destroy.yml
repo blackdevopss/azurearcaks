@@ -19,7 +19,7 @@ pool:
 stages:    
 
   - stage: Initialize
-    displayName: Stage - TF Init
+    displayName: Initialize Desttruction
     jobs:
     - job: Initialize_Terraform
       steps:
@@ -32,7 +32,7 @@ stages:
           allowTelemetryCollection: false 
 
   - stage: DestroyEKS
-    displayName: Stage - TF Destroy EKS
+    displayName: Destroy EKS
     dependsOn: ['Initialize']
     condition: succeeded('Initialize')
     jobs:
@@ -61,7 +61,7 @@ stages:
 
   - stage: DestroyAKS
     pool: blackdevops
-    displayName: Stage - TF Destroy AKS
+    displayName: Destroy AKS
     dependsOn: ['Initialize']
     condition: succeeded('Initialize')
     jobs:
@@ -89,7 +89,7 @@ stages:
                 allowTelemetryCollection: false
 
   - stage: DestroyGKE
-    displayName: Stage - TF Destroy GKE
+    displayName: Destroy GKE
     dependsOn: ['Initialize']
     condition: succeeded('Initialize')
     jobs:
