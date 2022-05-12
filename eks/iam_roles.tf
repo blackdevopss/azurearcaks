@@ -1,5 +1,5 @@
 resource "aws_iam_role" "eks" {
-  name = "role-azarc-eks"
+  name = "role-${local.resource}-${local.env}-${local.region}"
 
   assume_role_policy = <<POLICY
 {
@@ -31,3 +31,4 @@ resource "aws_iam_role_policy_attachment" "eks_AmazonEKSVPCResourceController" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.eks.name
 }
+
