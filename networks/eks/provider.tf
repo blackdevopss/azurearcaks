@@ -13,17 +13,19 @@ provider "aws" {
   secret_key = var.secret_key
   default_tags {
     tags = {
-      ManagedBy = "terraform"
+      ManagedBy   = "Terraform"
+      Environment = "POC"
     }
   }
 }
+
 
 terraform {
   cloud {
     organization = "blackdevopss"
 
     workspaces {
-      name = "aws-eks-cluster"
+      name = "aws-eks-network"
     }
   }
 }

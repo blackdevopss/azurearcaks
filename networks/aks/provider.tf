@@ -45,7 +45,7 @@ terraform {
     organization = "blackdevopss"
 
     workspaces {
-      name = "azurearc-aks"
+      name = "azure-aks-network"
     }
   }
 }

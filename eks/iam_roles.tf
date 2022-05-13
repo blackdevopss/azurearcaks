@@ -1,3 +1,4 @@
+/*
 resource "aws_iam_role" "eks" {
   name = "role-${local.resource}-${local.env}-${local.region}"
 
@@ -32,3 +33,4 @@ resource "aws_iam_role_policy_attachment" "eks_AmazonEKSVPCResourceController" {
   role       = aws_iam_role.eks.name
 }
 
+*/

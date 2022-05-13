@@ -1,8 +1,7 @@
-resource_group_name                  = "rg-aks-clusters"
+resource_group_name                  = "rg-arc-aks-poc"
 azure_region                         = "centralus"
-aks_subnet_name                      = "snet-azarc-aks"
-aks_vnet_name                        = "vnet-azarc-aks"
-aks_vnet_address_space               = ["10.150.0.0/19"]
+vnet_name                            = "vnet-arc-aks-poc"
+vnet_address_space                   = ["10.150.0.0/19"]
 aks_nodepool_subnet_address_prefixes = ["10.150.0.0/21"]
 
 vnet_service_endpoints = [
@@ -19,8 +18,7 @@ vnet_service_endpoints = [
 
 tags = {
 
-  "provisioner" = "terraform"
-  "resource"    = "aks"
-  "env"         = "poc"
-  "org"         = "blackdevops"
+  "managedBy" = "terraform"
+  "resource"  = "aks"
+  "env"       = "POC"
 }

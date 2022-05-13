@@ -19,7 +19,7 @@ pool:
 stages:    
 
   - stage: Initialize
-    displayName: Initialize Desttruction
+    displayName: Initialize Destruction
     jobs:
     - job: Initialize_Terraform
       steps:
