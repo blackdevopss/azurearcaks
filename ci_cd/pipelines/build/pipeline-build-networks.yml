@@ -46,8 +46,8 @@ stages:
           allowTelemetryCollection: false 
 
   - stage: EKS_VPC
-    dependsOn: [Initialize]
-    condition: succeeded('Initialize')
+    dependsOn: [Create_Networks]
+    condition: succeeded('Create_Networks')
     displayName: EKS VPC
     jobs:
     - job: Validate_TF_Config
@@ -81,8 +81,8 @@ stages:
 
   - stage: AKS_VNET
     pool: blackdevops
-    dependsOn: ['Initialize']
-    condition: succeeded('Initialize')
+    dependsOn: ['Create_Networks']
+    condition: succeeded('Create_Networks')
     displayName: AKS VNET
     jobs:
     - job: Validate_TF_Config
@@ -115,8 +115,8 @@ stages:
           artifact: '$(Build.SourceBranchName)_$(aks_artifact_name)'
 
   - stage: GKE_VPC
-    dependsOn: ['Initialize']
-    condition: succeeded('Initialize')
+    dependsOn: ['Create_Networks']
+    condition: succeeded('Create_Networks')
     displayName: GKE VPC
     jobs:
     - job: Validate_TF_Config
