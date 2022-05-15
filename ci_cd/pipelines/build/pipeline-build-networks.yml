@@ -32,8 +32,8 @@ pool:
 
 stages:    
 
-  - stage: Create Networks
-    displayName: Initialize
+  - stage: Create_Networks
+    displayName: Create Networks
     jobs:
     - job: Initialize_Terraform
       steps:

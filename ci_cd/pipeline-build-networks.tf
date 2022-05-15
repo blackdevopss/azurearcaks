@@ -1,4 +1,4 @@
-resource "azuredevops_build_definition" "create" {
+resource "azuredevops_build_definition" "networks" {
   project_id      = data.azuredevops_project.project.id
   name            = "Multi-Cloud Networks - Create"
   agent_pool_name = data.azuredevops_agent_pool.blackdevops.name
