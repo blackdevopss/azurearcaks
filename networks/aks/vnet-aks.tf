@@ -1,15 +1,15 @@
 resource "azurerm_resource_group" "aks" {
-  name     = var.aks_resource_group_name
+  name     = "rg-${local.project}-${local.poc}-${local.region}"
   location = var.azure_region
 
   tags = var.tags
 }
 
 resource "azurerm_network_security_group" "aks" {
-  for_each            = var.aks_security_groups
-  name                = each.key
-  location            = each.value.location
-  resource_group_name = each.value.resource_group_name
+  for_each            = var.vnet_subnets
+  name                = each.value.nsg_name
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
 
   tags = var.tags
 }
@@ -48,3 +48,8 @@ resource "azurerm_subnet" "aks" {
   }
 }
 
+resource "azurerm_subnet_network_security_group_association" "aks" {
+  for_each                  = var.vnet_subnets
+  subnet_id                 = azurerm_subnet.aks[each.key].id
+  network_security_group_id = azurerm_network_security_group.aks[each.value.nsg_name].id
+}

@@ -1,0 +1,160 @@
+name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r) 
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+    - networks
+    exclude:
+    - ci_cd
+    - eks 
+    - gke 
+    - aks 
+    - clusters
+
+variables:
+- group: TerraformVarsGroup
+- name: repo_id
+  value: blackdevops/azurearcaks
+- name: eks_artifact_name
+  value: TF_Plan_EKS_VPC
+- name: aks_artifact_name
+  value: TF_Plan_AKS_VNET
+- name: gke_artifact_name
+  value: TF_Plan_GKE_VPC
+- name: region
+  value: us-west-1
+
+pool:
+  name: blackdevops
+
+stages:    
+
+  - stage: Create Networks
+    displayName: Initialize
+    jobs:
+    - job: Initialize_Terraform
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+
+  - stage: EKS_VPC
+    dependsOn: [Initialize]
+    condition: succeeded('Initialize')
+    displayName: EKS VPC
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Validate
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
+          allowTelemetryCollection: false
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
+          commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
+          allowTelemetryCollection: false
+          publishPlanResults: '$(eks_artifact_name).tfplan'
+      - task: PublishPipelineArtifact@1
+        displayName: Publishing Terraform Plan
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/networks/eks'
+          artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
+
+  - stage: AKS_VNET
+    pool: blackdevops
+    dependsOn: ['Initialize']
+    condition: succeeded('Initialize')
+    displayName: AKS VNET
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Validate
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+          allowTelemetryCollection: false
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+          commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
+          allowTelemetryCollection: false
+          publishPlanResults: '$(aks_artifact_name).tfplan'
+      - task: PublishPipelineArtifact@1
+        displayName: Publishing Terraform Plan
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/networks/aks'
+          artifact: '$(Build.SourceBranchName)_$(aks_artifact_name)'
+
+  - stage: GKE_VPC
+    dependsOn: ['Initialize']
+    condition: succeeded('Initialize')
+    displayName: GKE VPC
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: downloadsSecureFile@0
+        displayName: DownloadGCPCredentials
+        inputs:
+          fileInput: 'slsfs-dev-365463f644a0.json'
+          targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: TerraformCLI@0
+        displayName: Validate
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+          allowTelemetryCollection: false
+      - task: downloadsSecureFile@0
+        displayName: DownloadGCPCredentials
+        inputs:
+          fileInput: 'slsfs-dev-365463f644a0.json'
+          targetPath: '$(System.DefaultWorkingDirectory)/gke'
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/gke'
+          allowTelemetryCollection: false
+          publishPlanResults: '$(gke_artifact_name).tfplan'
+      - task: PublishPipelineArtifact@1
+        displayName: Publishing Terraform Plan
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
+          artifact: '$(Build.SourceBranchName)_$(gke_artifact_name)'
+
+ 

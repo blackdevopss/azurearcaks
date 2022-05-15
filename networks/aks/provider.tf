@@ -8,11 +8,6 @@ terraform {
       source  = "hashicorp/azuread"
       version = "2.21.0"
     }
-    azapi = {
-      source  = "Azure/azapi"
-      version = "0.1.1"
-    }
-
   }
 }
 
@@ -30,14 +25,6 @@ provider "azurerm" {
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
   features {}
-}
-
-provider "azapi" {
-  client_id       = var.client_id
-  client_secret   = var.client_secret
-  subscription_id = var.subscription_id
-  tenant_id       = var.tenant_id
-
 }
 
 terraform {
