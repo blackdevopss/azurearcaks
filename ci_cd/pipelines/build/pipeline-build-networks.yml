@@ -157,4 +157,17 @@ stages:
           targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
           artifact: '$(Build.SourceBranchName)_$(gke_artifact_name)'
 
- 
+  - stage: Create_Clusters
+    displayName: Create Clusters
+    dependsOn: ['EKS_VPC', 'AKS_VNET', 'GKE_VPC']
+    condition: succeeded('EKS_VPC', 'AKS_VNET', 'GKE_VPC')
+    jobs:
+    - job: Initialize_Terraform
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
