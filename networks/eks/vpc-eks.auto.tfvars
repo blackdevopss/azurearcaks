@@ -1,3 +1,5 @@
+aws_region = "us-west-1"
+
 // VPC
 vpc = {
 
