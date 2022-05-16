@@ -43,40 +43,6 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
 
-  - stage: EKS_VPC
-    dependsOn: [Create_Networks]
-    condition: succeeded('Create_Networks')
-    displayName: EKS VPC
-    jobs:
-    - job: Validate_TF_Config
-      steps:
-      - task: TerraformCLI@0
-        displayName: Init
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          allowTelemetryCollection: false
-      - task: TerraformCLI@0
-        displayName: Terraform Plan
-        inputs:
-          command: 'plan'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          commandOptions: '-var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
-          allowTelemetryCollection: false
-          publishPlanResults: '$(eks_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/networks/eks'
-          artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
-
   - stage: AKS_VNET
     pool: blackdevops
     dependsOn: ['Create_Networks']
