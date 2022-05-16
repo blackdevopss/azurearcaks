@@ -18,12 +18,8 @@ variables:
 - group: TerraformVarsGroup
 - name: repo_id
   value: blackdevops/azurearcaks
-- name: eks_artifact_name
-  value: TF_Plan_EKS_VPC
-- name: aks_artifact_name
-  value: TF_Plan_AKS_VNET
-- name: gke_artifact_name
-  value: TF_Plan_GKE_VPC
+- name: region
+  value: us-west-1
 
 pool:
   name: blackdevops
@@ -58,24 +54,12 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
       - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          allowTelemetryCollection: false
-      - task: TerraformCLI@0
         displayName: Terraform Plan
         inputs:
-          command: 'plan'
+          command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
           commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
           allowTelemetryCollection: false
-          publishPlanResults: '$(eks_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/networks/eks'
-          artifact: '$(Build.SourceBranchName)_$(eks_artifact_name)'
 
   - stage: AKS_VNET
     pool: blackdevops
@@ -93,24 +77,12 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
       - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
-          allowTelemetryCollection: false
-      - task: TerraformCLI@0
         displayName: Terraform Plan
         inputs:
-          command: 'plan'
+          command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
           commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
           allowTelemetryCollection: false
-          publishPlanResults: '$(aks_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/networks/aks'
-          artifact: '$(Build.SourceBranchName)_$(aks_artifact_name)'
 
   - stage: GKE_VPC
     dependsOn: ['Create_Networks']
@@ -131,12 +103,6 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Validate
-        inputs:
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
-          allowTelemetryCollection: false
       - task: downloadsSecureFile@0
         displayName: DownloadGCPCredentials
         inputs:
@@ -145,27 +111,6 @@ stages:
       - task: TerraformCLI@0
         displayName: Terraform Plan
         inputs:
-          command: 'plan'
+          command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
           allowTelemetryCollection: false
-          publishPlanResults: '$(gke_artifact_name).tfplan'
-      - task: PublishPipelineArtifact@1
-        displayName: Publishing Terraform Plan
-        inputs:
-          targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
-          artifact: '$(Build.SourceBranchName)_$(gke_artifact_name)'
-
-  - stage: Create_Clusters
-    displayName: Create Clusters
-    dependsOn: ['EKS_VPC', 'AKS_VNET', 'GKE_VPC']
-    condition: succeeded('EKS_VPC', 'AKS_VNET', 'GKE_VPC')
-    jobs:
-    - job: Initialize_Terraform
-      steps:
-      - task: TerraformCLI@0
-        displayName: Init
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
