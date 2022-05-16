@@ -123,7 +123,7 @@ stages:
 
   - stage: Create_Clusters
     displayName: Create Clusters
-    dependsOn: ['EKS_VPC', 'AKS_VNET', 'GKE_VPC']
+    dependsOn: ['AKS_VNET', 'GKE_VPC']
     condition: succeeded('EKS_VPC', 'AKS_VNET', 'GKE_VPC')
     jobs:
     - job: Initialize_Terraform
