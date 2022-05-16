@@ -68,7 +68,7 @@ stages:
         inputs:
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
+          commandOptions: '-var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
           allowTelemetryCollection: false
           publishPlanResults: '$(eks_artifact_name).tfplan'
       - task: PublishPipelineArtifact@1
