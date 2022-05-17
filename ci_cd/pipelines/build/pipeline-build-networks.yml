@@ -182,18 +182,18 @@ stages:
               displayName: DownloadGCPCredentials
               inputs:
                 fileInput: 'slsfs-dev-365463f644a0.json'
-                targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
+                targetPath: '$(System.DefaultWorkingDirectory)/clusters/gke'
             - task: TerraformCLI@0
               displayName: Init
               inputs:
                 command: 'init'
-                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/gke'
                 backendType: 'selfConfigured'
                 allowTelemetryCollection: false 
             - task: TerraformCLI@0
               displayName: Apply
               inputs:
                 command: 'apply'
-                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/gke'
 #                commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
                 allowTelemetryCollection: false
