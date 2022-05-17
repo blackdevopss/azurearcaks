@@ -164,3 +164,36 @@ stages:
                 workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/aks'
                 commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
                 allowTelemetryCollection: false
+
+  - stage: ReleaseGKE
+    displayName: GKE
+    dependsOn: [Create_Clusters]
+    condition: succeeded('Create_Clusters')
+    jobs:
+    - deployment: Apply
+      displayName: 'Terraform Apply'
+      environment: gcp
+      pool: blackdevops
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: downloadsSecureFile@0
+              displayName: DownloadGCPCredentials
+              inputs:
+                fileInput: 'slsfs-dev-365463f644a0.json'
+                targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
+            - task: TerraformCLI@0
+              displayName: Init
+              inputs:
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+                backendType: 'selfConfigured'
+                allowTelemetryCollection: false 
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+#                commandOptions: '-var "gcp_svs_account=$(gcp_credentials.secureFilePath)"'
+                allowTelemetryCollection: false
