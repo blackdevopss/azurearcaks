@@ -135,3 +135,32 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
+
+  - stage: ReleaseAKS
+    pool: blackdevops
+    displayName: AKS
+    dependsOn: [Create_Clusters]
+    condition: succeeded('Create_Clusters')
+    jobs:
+    - deployment: Apply
+      displayName: 'Terraform Apply'
+      environment: azure
+      pool: blackdevops
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: TerraformCLI@0
+              displayName: Init
+              inputs:
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+                backendType: 'selfConfigured'
+                allowTelemetryCollection: false 
+            - task: TerraformCLI@0
+              displayName: Apply
+              inputs:
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+                commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
+                allowTelemetryCollection: false
