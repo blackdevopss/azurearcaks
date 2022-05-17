@@ -124,7 +124,7 @@ consumer_vpc_subnets = {
 
 // APIS
 google_apis = ["dns.googleapis.com", "servicedirectory.googleapis.com",
-"servicenetworking.googleapis.com", "compute.googleapis.com"]
+"servicenetworking.googleapis.com", "compute.googleapis.com", "container.googleapis.com"]
 
 
 // FIREWALL RULES
