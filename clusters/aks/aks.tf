@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "aks" {
-  name     = "rg-aks-networks"
+  name     = "rg-aks-clusters"
   location = var.azure_region
 
   tags = var.tags
