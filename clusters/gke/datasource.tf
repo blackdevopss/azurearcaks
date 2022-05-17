@@ -3,5 +3,5 @@ data "google_service_account" "gke" {
 }
 
 output "service_account_id" {
-  value = data.google_service_account.aks.email
+  value = data.google_service_account.gke.email
 }
