@@ -154,13 +154,13 @@ stages:
               displayName: Init
               inputs:
                 command: 'init'
-                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/aks'
                 backendType: 'selfConfigured'
                 allowTelemetryCollection: false 
             - task: TerraformCLI@0
               displayName: Apply
               inputs:
                 command: 'apply'
-                workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/aks'
                 commandOptions: '-input=false -var "client_id=$(client-id)" -var "client_secret=$(client-secret)" -var "subscription_id=$(subscription-id)" -var "tenant_id=$(tenant-id)"'
                 allowTelemetryCollection: false
