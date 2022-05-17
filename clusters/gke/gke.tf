@@ -26,4 +26,5 @@ resource "google_container_node_pool" "gke" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
   }
+  provider = google.provider
 }
