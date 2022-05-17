@@ -5,7 +5,7 @@ variable "aks_cluster_dns_prefix" {
   type = string
 }
 
-variable "admin_user_name" {
+variable "admin_username" {
   type = string
 }
 
