@@ -9,23 +9,23 @@ terraform {
 }
 
 provider "google" {
-  project     = var.project_id
+  project     = "slsfs-hub"
   credentials = file("slsfs-dev-365463f644a0.json")
-  region      = var.gcp_region
+  region      = "us-central1"
   alias       = "provider"
 }
 
 provider "google" {
-  project     = var.project_id
+  project     = "slsfs-prd"
   credentials = file("slsfs-dev-365463f644a0.json")
-  region      = var.gcp_region
+  region      = "us-central1"
   alias       = "consumer"
 }
 
 provider "google" {
   project     = var.project_id
   credentials = file("slsfs-dev-365463f644a0.json")
-  region      = var.gcp_region
+  region      = "us-central1"
 }
 
 terraform {
@@ -37,3 +37,4 @@ terraform {
     }
   }
 }
+
