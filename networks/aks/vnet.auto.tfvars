@@ -2,6 +2,7 @@ azure_region       = "centralus"
 vnet_name          = "vnet-arc-aks-poc"
 vnet_address_space = ["10.150.0.0/19"]
 
+
 service_endpoints = [
   "Microsoft.Storage",
   "Microsoft.Sql",

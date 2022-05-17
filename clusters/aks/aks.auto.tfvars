@@ -8,6 +8,7 @@ system_node_pool_node_max_count    = 2
 system_node_pool_node_vm_size      = "Standard_B4ms"
 admin_user_name                    = "blackdevops"
 azure_region                       = "centralus"
+admin_username                     = "blackdevops"
 
 
 vnet_service_endpoints = [
