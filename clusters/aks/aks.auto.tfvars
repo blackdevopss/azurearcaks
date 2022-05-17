@@ -6,22 +6,8 @@ aks_cluster_admin_group_object_ids = ["538d6845-8038-4cbe-8ab4-54b1b5930834"]
 system_node_pool_node_min_count    = 1
 system_node_pool_node_max_count    = 2
 system_node_pool_node_vm_size      = "Standard_B4ms"
-admin_user_name                    = "blackdevops"
 azure_region                       = "centralus"
 admin_username                     = "blackdevops"
-
-
-vnet_service_endpoints = [
-  "Microsoft.Storage",
-  "Microsoft.Sql",
-  "Microsoft.ContainerRegistry",
-  "Microsoft.AzureCosmosDB",
-  "Microsoft.KeyVault",
-  "Microsoft.ServiceBus",
-  "Microsoft.EventHub",
-  "Microsoft.AzureActiveDirectory",
-"Microsoft.Web"]
-
 
 tags = {
 
