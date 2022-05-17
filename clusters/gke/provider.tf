@@ -23,7 +23,7 @@ provider "google" {
 }
 
 provider "google" {
-  project     = var.project_id
+  project     = "slsfs-hub"
   credentials = file("slsfs-dev-365463f644a0.json")
   region      = "us-central1"
 }

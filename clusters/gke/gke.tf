@@ -21,7 +21,7 @@ resource "google_container_node_pool" "gke" {
     machine_type = "e2-medium"
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = data.google_service_account.aks.email
+    service_account = data.google_service_account.gke.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
