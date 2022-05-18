@@ -25,35 +25,13 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
 
-  - stage: EKS_VPC
-    dependsOn: [Initialize_Destroy]
-    condition: succeeded('Initialize_Destroy')
-    displayName: EKS VPC
-    jobs:
-    - job: Validate_TF_Config
-      steps:
-      - task: TerraformCLI@0
-        displayName: Init
-        inputs:
-          command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          backendType: 'selfConfigured'
-          allowTelemetryCollection: false 
-      - task: TerraformCLI@0
-        displayName: Terraform Plan
-        inputs:
-          command: 'destroy'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/networks/eks'
-          commandOptions: '-var "region=$(region)" -var "access_key=$(access-key)" -var "secret_key=$(secret-key)"'
-          allowTelemetryCollection: false
-
   - stage: AKS_VNET
     pool: blackdevops
     dependsOn: ['Initialize_Destroy']
     condition: succeeded('Initialize_Destroy')
     displayName: AKS VNET
     jobs:
-    - job: Validate_TF_Config
+    - job: 
       steps:
       - task: TerraformCLI@0
         displayName: Init
@@ -63,7 +41,7 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
       - task: TerraformCLI@0
-        displayName: Terraform Plan
+        displayName: Terraform Destroy
         inputs:
           command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/aks'
@@ -75,7 +53,7 @@ stages:
     condition: succeeded('Initialize_Destroy')
     displayName: GKE VPC
     jobs:
-    - job: Validate_TF_Config
+    - job: 
       steps:
       - task: downloadsSecureFile@0
         displayName: DownloadGCPCredentials
@@ -90,7 +68,7 @@ stages:
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
       - task: TerraformCLI@0
-        displayName: Terraform Plan
+        displayName: Terraform Destroy
         inputs:
           command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
@@ -101,7 +79,7 @@ stages:
     condition: succeeded('Initialize_Destroy')
     displayName: Destroy GKE
     jobs:
-    - job: Validate_TF_Config
+    - job: 
       steps:
       - task: TerraformCLI@0
         displayName: Init
@@ -116,7 +94,7 @@ stages:
           fileInput: 'slsfs-dev-365463f644a0.json'
           targetPath: '$(System.DefaultWorkingDirectory)/clusters/gke'
       - task: TerraformCLI@0
-        displayName: Terraform Plan
+        displayName: Terraform Destroy
         inputs:
           command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/gke'
