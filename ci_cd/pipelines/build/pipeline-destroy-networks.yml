@@ -1,19 +1,5 @@
 name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r) 
 
-trigger:
-  branches:
-    include:
-      - main
-  paths:
-    include:
-    - networks
-    exclude:
-    - ci_cd
-    - eks 
-    - gke 
-    - aks 
-    - clusters
-
 variables:
 - group: TerraformVarsGroup
 - name: repo_id
@@ -26,7 +12,7 @@ pool:
 
 stages:    
 
-  - stage: Create_Networks
+  - stage: Initialize_Destroy
     displayName: Create Networks
     jobs:
     - job: Initialize_Terraform
@@ -40,8 +26,8 @@ stages:
           allowTelemetryCollection: false 
 
   - stage: EKS_VPC
-    dependsOn: [Create_Networks]
-    condition: succeeded('Create_Networks')
+    dependsOn: [Initialize_Destroy]
+    condition: succeeded('Initialize_Destroy')
     displayName: EKS VPC
     jobs:
     - job: Validate_TF_Config
@@ -63,8 +49,8 @@ stages:
 
   - stage: AKS_VNET
     pool: blackdevops
-    dependsOn: ['Create_Networks']
-    condition: succeeded('Create_Networks')
+    dependsOn: ['Initialize_Destroy']
+    condition: succeeded('Initialize_Destroy')
     displayName: AKS VNET
     jobs:
     - job: Validate_TF_Config
@@ -85,8 +71,8 @@ stages:
           allowTelemetryCollection: false
 
   - stage: GKE_VPC
-    dependsOn: ['Create_Networks']
-    condition: succeeded('Create_Networks')
+    dependsOn: ['Initialize_Destroy']
+    condition: succeeded('Initialize_Destroy')
     displayName: GKE VPC
     jobs:
     - job: Validate_TF_Config
@@ -111,8 +97,8 @@ stages:
           allowTelemetryCollection: false
 
   - stage: GKE_Cluster
-    dependsOn: ['Create_Networks']
-    condition: succeeded('Create_Networks')
+    dependsOn: ['Initialize_Destroy']
+    condition: succeeded('Initialize_Destroy')
     displayName: Destroy GKE
     jobs:
     - job: Validate_TF_Config

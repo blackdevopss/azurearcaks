@@ -4,17 +4,11 @@ variables:
 - group: TerraformVarsGroup
 - name: repo_id
   value: blackdevops/azurearcaks
-- name: eks_artifact_name
-  value: TF_Plan_EKS
-- name: aks_artifact_name
-  value: TF_Plan_AKS
-- name: gke_artifact_name
-  value: TF_Plan_GKE
 - name: region
   value: us-west-1
 
 pool:
-  name: aws
+  name: blackdevops
 
 stages:    
 
@@ -39,7 +33,7 @@ stages:
     - deployment: Destroy
       displayName: 'Terraform Destroy'
       environment: aws
-      pool: aws
+      pool: blackdevops
       strategy:
         runOnce:
           deploy:
