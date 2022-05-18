@@ -103,14 +103,35 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
           backendType: 'selfConfigured'
           allowTelemetryCollection: false 
-      - task: downloadsSecureFile@0
-        displayName: DownloadGCPCredentials
-        inputs:
-          fileInput: 'slsfs-dev-365463f644a0.json'
-          targetPath: '$(System.DefaultWorkingDirectory)/networks/gke'
       - task: TerraformCLI@0
         displayName: Terraform Plan
         inputs:
           command: 'destroy'
           workingDirectory: '$(System.DefaultWorkingDirectory)/networks/gke'
+          allowTelemetryCollection: false
+
+  - stage: GKE_Cluster
+    dependsOn: ['Create_Networks']
+    condition: succeeded('Create_Networks')
+    displayName: Destroy GKE
+    jobs:
+    - job: Validate_TF_Config
+      steps:
+      - task: TerraformCLI@0
+        displayName: Init
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/gke'
+          backendType: 'selfConfigured'
+          allowTelemetryCollection: false 
+      - task: downloadsSecureFile@0
+        displayName: DownloadGCPCredentials
+        inputs:
+          fileInput: 'slsfs-dev-365463f644a0.json'
+          targetPath: '$(System.DefaultWorkingDirectory)/clusters/gke'
+      - task: TerraformCLI@0
+        displayName: Terraform Plan
+        inputs:
+          command: 'destroy'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/clusters/gke'
           allowTelemetryCollection: false

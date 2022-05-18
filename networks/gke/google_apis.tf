@@ -8,7 +8,7 @@ resource "google_project_service" "provider" {
     update = "40m"
   }
 
-  disable_dependent_services = false
+  disable_dependent_services = true
 }
 
 
@@ -22,5 +22,5 @@ resource "google_project_service" "consumer" {
     update = "40m"
   }
 
-  disable_dependent_services = false
+  disable_dependent_services = true
 }

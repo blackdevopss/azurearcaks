@@ -1,4 +1,4 @@
-resource "azuredevops_build_definition" "networks" {
+resource "azuredevops_build_definition" "destroy_networks" {
   project_id      = data.azuredevops_project.project.id
   name            = "Multi-Cloud Networks - Destroy"
   agent_pool_name = data.azuredevops_agent_pool.blackdevops.name
